@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<script>
+    // Добавить переменнную кофе(зерна)
+    // Ввести проверку на пустую кофеварку
+    // Реализовать зависимость от кол-ва кофе
+    // Реализовать метод стоп
+
+    function CoffeeMachine(power) {
+        let waterAmount = 0;
+        let waterHeatCapacity = 4200;
+        let maxTemp = 90;
+        let beansAmount = 0;
+
+        const getBoilTime = function () {
+            return (waterAmount * waterHeatCapacity * maxTemp) / power
+        };
+
+        const checkWater = function () {
+            return waterAmount > 0;
+        };
+
+        const checkBeans = function() {
+            return beansAmount >= 10;
+        };
+
+        this.fill = function (newAmount) {
+            if (newAmount >= 50) {
+                waterAmount = newAmount
+            } else {
+                console.error('Слишком мало воды')
+            }
+        };
+
+        this.putBeans = function(amount) {
+            if (amount >= 10){
+                beansAmount = amount
+            } else {
+                console.error('Слишком мало зерна')
+            }
+        };
+
+        this.launch = function () {
+            if (!checkWater()) {
+                console.error('Налейте воды!');
+                return;
+            }
+            if (!checkBeans()) {
+                console.error('Насыпьте кофе!');
+                return;
+            }
+            const boilTime = getBoilTime();
+            console.info(`Время приготовления: ${boilTime/1000} сек`);
+            this.timeOut = setTimeout(function () {
+                beansAmount -= 10;
+                console.log('Ваш кофе готов!');
+                let o = Math.floor(beansAmount / 10);
+                console.log(`Кофе осталось на ${o} чаш${o === 1 ? 'ку' : o <= 4 ? 'ки' : 'ек'}`);
+            }, boilTime)
+        };
+        this.stop = function() {
+            clearTimeout(this.timeOut);
+            console.log('Кофе не готов, кофеварка остановлена!');
+        }
+    }
+
+    const vitek = new CoffeeMachine(3500);
+
+    vitek.fill(50);
+    vitek.putBeans(65);
+    vitek.launch();
+    vitek.launch();
+    vitek.launch();
+    // vitek.stop();
+</script>
+</body>
+</html>
