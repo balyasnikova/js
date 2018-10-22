@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div class="container mt-4">
+    <form id="add-product-form">
+        <div class="form-group">
+            <label for="name">Ваше имя</label>
+            <input type="text" class="form-control" id="name">
+        </div>
+        <div class="form-group">
+            <label for="comment">Напишите отзыв</label>
+            <textarea class="form-control" id="comment" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+    <h4 id="inform" class="mt-4"></h4>
+    <ul class="list-group mt-2">
+    </ul>
+</div>
+
+<script src="./http.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', init);
+    function init () {
+
+        let comments = [];
+
+        const $http = new Http('http://89.108.65.123:8080');
+
+        const removeComment = async (commentID) => {
+            const queryString = `comment_id=${commentID}`;
+            await $http.delete('/comments', queryString);
+            const index = comments.findIndex(i => i.comment_id === commentID);
+            comments.splice(index, 1);
+            renderInformation()
+        };
+        const likeComment = async (commentID) => {
+            const queryString = `comment_id=${commentID}`;
+            const data = await $http.patch('/comments', queryString);
+            const index = comments.findIndex(i => i.comment_id === commentID);
+            comments[index].likes = data.likes;
+            renderInformation()
+        };
+        const renderInformation = () => {
+            const listHTML = document.querySelector('.list-group');
+            listHTML.innerHTML = '';
+            comments.forEach((item) => {
+                listHTML.innerHTML +=
+                    `<li class="list-group-item" data-id="${item.comment_id}">${item.text}
+                    <div class="controls" style="float: right;">
+                        <span class="badge badge-primary badge-pill">${item.likes}</span>
+                        <button type="button" class="btn btn-primary btn-sm">Одобрить</button>
+                        <button type="button" class="btn btn-danger btn-sm">Удалить</button>
+                    </div>
+
+                 </li>`
+            });
+            const listItem = [...listHTML.querySelectorAll('li')];
+            listItem.forEach((li) => {
+                const commentID = li.getAttribute('data-id');
+                const remove = li.querySelector('.btn-danger');
+                const like = li.querySelector('.btn-primary');
+                remove.addEventListener('click', () => {
+                    removeComment(commentID)
+                });
+                like.addEventListener('click', () => {
+                    likeComment(commentID)
+                });
+            })
+        };
+        const createList = async () => {
+            try {
+                const userData = await $http.get('/comments');
+                comments = userData;
+                renderInformation();
+            } catch (e) {
+                console.error(e)
+            }
+        };
+        const addComment = async (e) => {
+            e.preventDefault();
+            const name = e.target[0].value;
+            const comment = e.target[1].value;
+            const data = `id_user=${name}&text=${comment}`;
+            const request = await $http.post('/comments', data);
+            comments.unshift(request);
+            renderInformation()
+        };
+        const addListeners = () => { // навешиваем события
+            const productForm = document.querySelector('#add-product-form');
+            productForm.addEventListener('submit', addComment)
+        };
+
+        addListeners();
+        createList();
+    }
+</script>
+</body>
+</html>
