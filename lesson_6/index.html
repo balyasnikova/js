@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Урок 3</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+</head>
+<body>
+
+<form class="user-form">
+    <div class="container mt-4">
+
+        <label for="nameInput">Имя</label>
+        <input type="text" id="nameInput" class="form-control mb-4" placeholder="Введите имя">
+
+        <label for="emailInput">Email</label>
+        <input type="text" id="emailInput" class="form-control mb-4" placeholder="Введите email" title="test@example.ru">
+
+        <label for="phoneInput">Телефон</label>
+        <input type="text" id="phoneInput" class="form-control mb-4" placeholder="Введите номер телефона">
+
+        <label for="date">Дата рождения</label>
+        <input id="date" class="form-control mb-4" type="date">
+
+        <label for="comment">Комментарий</label>
+        <input id="comment" class="form-control mb-4" placeholder="Введите комментарий" >
+
+        <button type="submit" class="send_message">Отправить</button>
+    </div>
+</form>
+
+<div class="modal" id="modal-error" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ошибка</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Поправьте данные в форме: </p>
+                <div id="message-error"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script>
+    const inputs = [ ... document.querySelectorAll('.user-form input')];
+    const userForm = document.querySelector('.user-form');
+
+    userForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const [name, email, phone, comment] = inputs.map(input => input.value);
+
+        const errorHTML = document.querySelector('#message-error');
+        errorHTML.innerHTML = '';
+
+        if (/^[a-zа-яё]+$/gi.test(name)) {
+            const el = inputs.find(input => input.value === name);
+            el.style.border = '1px solid #ced4da';
+        } else {
+            const el = inputs.find(input => input.value === name);
+            el.style.border = '2px solid red';
+            $('#message-error').append('<p>Невалидное имя!</p>');
+            $('#modal-error').modal({
+                show: true,
+            });
+        }
+
+        if (/^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\.)+[a-z]{2,6}$/gi.test(email)) {
+            const el = inputs.find(input => input.value === email);
+            el.style.border = '1px solid #ced4da';
+        } else {
+            const el = inputs.find(input => input.value === email);
+            el.style.border = '2px solid red';
+            $('#message-error').append('<p>Невалидный e-mail!</p>');
+            $('#modal-error').modal({
+                show: true,
+            });
+        }
+
+        if (/\+\d\(\d\d\d\)\d\d\d-\d\d\d\d/gi.test(phone)) {
+            const el = inputs.find(input => input.value === phone);
+            el.style.border = '1px solid #ced4da';
+        } else {
+            const el = inputs.find(input => input.value === phone);
+            el.style.border = '2px solid red';
+            $('#message-error').append('<p>Невалидный телефон!</p>');
+            $('#modal-error').modal({
+                show: true,
+            });
+        }
+
+        if (/^[a-zа-яё]+$/gi.test(comment)) {
+            const el = inputs.find(input => input.value === comment);
+            el.style.border = '1px solid #ced4da';
+        } else {
+            const el = inputs.find(input => input.value === comment);
+            el.style.border = '2px solid red';
+            $('#message-error').append('<p>Невалидный комментарий!</p>');
+            $('#modal-error').modal({
+                show: true,
+            });
+        }
+
+
+        console.log(name, email, phone, comment);
+    });
+
+
+</script>
+</body>
+</html>
