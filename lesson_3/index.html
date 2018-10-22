@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Урок 3</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+</head>
+<body>
+
+<form class="user-form">
+    <div class="container mt-4">
+
+        <label for="nameInput">Имя</label>
+        <input type="text" id="nameInput" class="form-control mb-4" placeholder="Введите имя">
+
+        <label for="emailInput">Email</label>
+        <input type="text" id="emailInput" class="form-control mb-4" placeholder="Введите email" title="test@example.ru">
+
+        <label for="phoneInput">Телефон</label>
+        <input type="text" id="phoneInput" class="form-control mb-4" placeholder="Введите номер телефона">
+
+        <label for="comment">Комментарий</label>
+        <input id="comment" class="form-control mb-4" placeholder="Введите комментарий" >
+
+        <button type="submit" class="send_message">Отправить</button>
+    </div>
+</form>
+
+
+<script>
+            /*Задание 1 и 2*/
+    let str = `One wet day a woman with a dog got on a bus. It was a very big dog and its feet were dirty.
+    The woman said, 'Oh, conductor, if I pay for my dog, can he have a seat like the other passengers?'
+    The conductor looked at the dog and then said, 'Certainly, madam, he can have a seat,
+    but like the other passengers, he mustn't put his feet on it.'`;
+
+    let reg = /\'(?=\w{2})|\'(?=\s)|\'$|\'(?=[.!,?;:])/gim;
+    console.log(str.replace(reg, '"'));
+
+
+            /*Задание 3*/
+    const inputs = [ ... document.querySelectorAll('.user-form input')];
+    const userForm = document.querySelector('.user-form');
+
+    userForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const [name, email, phone, comment] = inputs.map(input => input.value);
+
+        if (/^[a-zа-яё]+$/gi.test(name)) {
+            const el = inputs.find(input => input.value === name);
+            el.style.border = '1px solid #ced4da';
+        } else {
+            const el = inputs.find(input => input.value === name);
+            el.style.border = '2px solid red';
+        }
+
+        if (/^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\.)+[a-z]{2,6}$/gi.test(email)) {
+            const el = inputs.find(input => input.value === email);
+            el.style.border = '1px solid #ced4da';
+        } else {
+            const el = inputs.find(input => input.value === email);
+            el.style.border = '2px solid red';
+        }
+
+        if (/\+\d\(\d\d\d\)\d\d\d-\d\d\d\d/gi.test(phone)) {
+            const el = inputs.find(input => input.value === phone);
+            el.style.border = '1px solid #ced4da';
+        } else {
+            const el = inputs.find(input => input.value === phone);
+            el.style.border = '2px solid red';
+        }
+
+        if (/^[a-zа-яё]+$/gi.test(comment)) {
+            const el = inputs.find(input => input.value === comment);
+            el.style.border = '1px solid #ced4da';
+        } else {
+            const el = inputs.find(input => input.value === comment);
+            el.style.border = '2px solid red';
+        }
+
+
+        console.log(name, email, phone, comment);
+    });
+
+
+</script>
+</body>
+</html>
