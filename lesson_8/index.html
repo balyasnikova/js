@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/mocha@5.2.0/mocha.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chai@4.2.0/chai.js"></script>
+
+</head>
+<body>
+
+
+<div id="mocha"></div>
+<script>
+
+    mocha.setup('bdd');
+    let assert = chai.assert;
+
+    function CoffeeMachine(power) {
+        let waterAmount = 0;
+        let waterHeatCapacity = 4200;
+        let maxTemp = 90;
+        let beansAmount = 0;
+
+        const getBoilTime = function () {
+            return (waterAmount * waterHeatCapacity * maxTemp) / power
+        };
+
+        const checkWater = function () {
+            return waterAmount > 0;
+        };
+
+        const checkBeans = function() {
+            return beansAmount >= 10;
+        };
+
+        this.fill = function (newAmount) {
+            if (newAmount >= 50) {
+                waterAmount = newAmount
+            } else {
+                console.log('Слишком мало воды')
+            }
+            return waterAmount;
+        };
+
+        this.putBeans = function(amount) {
+            if (amount >= 10){
+                beansAmount = amount
+            } else {
+                console.log('Слишком мало зерна')
+            }
+            return beansAmount;
+        };
+
+        this.launch = function () {
+            if (!checkWater()) {
+                console.log('Налейте воды!');
+                return 'Налейте воды!';
+            }
+            if (!checkBeans()) {
+                console.log('Насыпьте кофе!');
+                return 'Насыпьте кофе!';
+            }
+            const boilTime = getBoilTime();
+            console.info(`Время приготовления: ${boilTime/1000} сек`);
+            beansAmount -= 10;
+            this.timeOut = setTimeout(function () {
+                console.log('Ваш кофе готов!');
+                let cupAmount = Math.floor(beansAmount / 10);
+                console.log(`Кофе осталось на ${cupAmount} чаш${cupAmount === 1 ? 'ку' : cupAmount <= 4 ? 'ки' : 'ек'}`);
+            }, boilTime);
+            return 'Ваш кофе готовится!';
+        };
+        this.stop = function() {
+            clearTimeout(this.timeOut);
+            console.log('Кофе не готов, кофеварка остановлена!');
+        }
+    }
+
+    const vitek = new CoffeeMachine(3500);
+    describe('Кофе машина', function () {
+
+        it('vitek - экземпляр класса CoffeeMachine ', function () {
+            assert.equal(vitek instanceof CoffeeMachine, true);
+        });
+
+        it('Первый запуск кофе машины - она пустая ', function () {
+            assert.equal(vitek.launch(), 'Налейте воды!');
+        });
+
+        it('Заливка воды ', function () {
+            assert.equal(vitek.fill(50), 50);
+        });
+
+        it('Второй запуск кофе машины - она без кофейных зерен ', function () {
+            assert.equal(vitek.launch(), 'Насыпьте кофе!');
+        });
+
+        it('Наполнение зерен ', function () {
+            assert.equal(vitek.putBeans(15), 15);
+        });
+
+        it('Третий запуск кофе машины - успешно ', function () {
+            assert.equal(vitek.launch(), 'Ваш кофе готовится!');
+        });
+
+        it('Четвертый запуск кофе машины - не хватает зерен ', function () {
+            assert.equal(vitek.launch(), 'Насыпьте кофе!');
+        });
+    });
+
+    mocha.run();
+</script>
+
+</body>
+</html>
